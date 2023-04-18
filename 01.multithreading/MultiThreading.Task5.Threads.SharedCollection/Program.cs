@@ -14,7 +14,7 @@ namespace MultiThreading.Task5.Threads.SharedCollection
     class Program
     {
         private static readonly ConcurrentQueue<int> _sharedCollection = new ConcurrentQueue<int>();
-        private static readonly SemaphoreSlim _semaphore = new SemaphoreSlim(1, 1);
+        private static readonly Semaphore _semaphore = new Semaphore(1, 1);
 
         static void Main(string[] args)
         {
@@ -37,10 +37,10 @@ namespace MultiThreading.Task5.Threads.SharedCollection
             {
                 while (_sharedCollection.Count < 10)
                 {
-                    _semaphore.Wait();
+                    _semaphore.WaitOne();
                     Console.WriteLine("Printing task prints - {0}.", string.Join(", ", _sharedCollection));
-                    _semaphore.Release();
                     Task.Delay(100).Wait();
+                    _semaphore.Release();
                 }
             });
         }
@@ -51,11 +51,11 @@ namespace MultiThreading.Task5.Threads.SharedCollection
             {
                 for (int i = 0; i < 10; i++)
                 {
-                    _semaphore.Wait();
+                    _semaphore.WaitOne();
                     _sharedCollection.Enqueue(i);
                     Console.WriteLine("Adding tasks adds - {0}.", i);
-                    _semaphore.Release();
                     Task.Delay(100).Wait();
+                    _semaphore.Release();
                 }
             });
         }
