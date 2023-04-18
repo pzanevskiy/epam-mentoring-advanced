@@ -13,6 +13,8 @@ namespace MultiThreading.Task2.Chaining
 {
     class Program
     {
+        private static readonly Random _random = new Random();
+
         static void Main(string[] args)
         {
             Console.WriteLine(".Net Mentoring Program. MultiThreading V1 ");
@@ -55,8 +57,7 @@ namespace MultiThreading.Task2.Chaining
 
         private static int[] MultiplyArray(Task<int[]> task)
         {
-            var random = new Random();
-            var multiplier = random.Next(0, 10);
+            var multiplier = _random.Next(0, 10);
             var array = task.Result;
 
             for (int i = 0; i < array.Length; i++)
@@ -70,12 +71,11 @@ namespace MultiThreading.Task2.Chaining
 
         private static int[] GenerateArray()
         {
-            var random = new Random();
             var array = new int[10];
 
             for (int i = 0; i < array.Length; i++)
             {
-                array[i] = random.Next(0, 100);
+                array[i] = _random.Next(0, 100);
             }
 
             Console.WriteLine("First task: {0}", string.Join(", ", array));

@@ -17,7 +17,7 @@ namespace MultiThreading.Task4.Threads.Join
     class Program
     {
         private const int StateNumber = 10;
-        private static readonly SemaphoreSlim _semaphore = new(3);
+        private static readonly SemaphoreSlim _semaphore = new(3, 3);
 
         static void Main(string[] args)
         {
@@ -32,13 +32,15 @@ namespace MultiThreading.Task4.Threads.Join
 
             ProcThread(StateNumber);
             ProcThreadPool(StateNumber);
+
+            Console.ReadKey();
         }
 
         private static void ProcThread(object obj)
         {
             var number = (int)obj;
             Console.WriteLine("Threads - " + number);
-            if (number > 0)
+            if (number > 1)
             {
                 var thread = new Thread(ProcThread);
                 thread.Start(--number);
@@ -51,7 +53,7 @@ namespace MultiThreading.Task4.Threads.Join
             var number = (int)obj;
             _semaphore.Wait();
             Console.WriteLine("Thread pool - " + number);
-            if (number > 0)
+            if (number > 1)
             {
                 ThreadPool.QueueUserWorkItem(ProcThreadPool, --number);
                 _semaphore.Release();
