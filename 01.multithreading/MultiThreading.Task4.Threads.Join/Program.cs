@@ -16,13 +16,15 @@ namespace MultiThreading.Task4.Threads.Join
 {
     class Program
     {
-        private const int StateNumber = 10;
-        private static readonly Semaphore _semaphore = new(3, 3);
+        private const int StateNumber = 100;
+        private static readonly Semaphore _semaphore = new(5, 5);
+        private static bool _state = false;
 
         static void Main(string[] args)
         {
             Console.WriteLine("4.	Write a program which recursively creates 10 threads.");
-            Console.WriteLine("Each thread should be with the same body and receive a state with integer number, decrement it, print and pass as a state into the newly created thread.");
+            Console.WriteLine(
+                "Each thread should be with the same body and receive a state with integer number, decrement it, print and pass as a state into the newly created thread.");
             Console.WriteLine("Implement all of the following options:");
             Console.WriteLine();
             Console.WriteLine("- a) Use Thread class for this task and Join for waiting threads.");
@@ -32,8 +34,6 @@ namespace MultiThreading.Task4.Threads.Join
 
             ProcThread(StateNumber);
             ProcThreadPool(StateNumber);
-
-            //Console.ReadKey();
         }
 
         private static void ProcThread(object obj)
@@ -51,14 +51,32 @@ namespace MultiThreading.Task4.Threads.Join
         private static void ProcThreadPool(object obj)
         {
             var number = (int)obj;
-            _semaphore.WaitOne();
             Console.WriteLine("Thread pool - " + number);
+
             if (number > 1)
             {
                 ThreadPool.QueueUserWorkItem(ProcThreadPool, --number);
+                _semaphore.WaitOne();
+            }
+            else
+            {
+                _state = true;
+            }
+
+            if (!Thread.CurrentThread.IsThreadPoolThread)
+            {
+                while (!_state)
+                {
+                    if (number == 0)
+                    {
+                        _semaphore.Release();
+                    }
+                }
+            }
+            else
+            {
                 _semaphore.Release();
             }
         }
-
     }
 }
