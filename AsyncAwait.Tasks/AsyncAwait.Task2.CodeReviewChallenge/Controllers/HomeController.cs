@@ -1,10 +1,10 @@
-﻿using System;
-using System.Diagnostics;
-using System.Threading.Tasks;
-using AsyncAwait.Task2.CodeReviewChallenge.Models;
+﻿using AsyncAwait.Task2.CodeReviewChallenge.Models;
 using AsyncAwait.Task2.CodeReviewChallenge.Models.Support;
 using AsyncAwait.Task2.CodeReviewChallenge.Services;
 using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Diagnostics;
+using System.Threading.Tasks;
 
 namespace AsyncAwait.Task2.CodeReviewChallenge.Controllers;
 
@@ -20,26 +20,26 @@ public class HomeController : Controller
         _privacyDataService = privacyDataService ?? throw new ArgumentNullException(nameof(privacyDataService));
     }
 
-    public ActionResult Index()
+    public IActionResult Index()
     {
         return View();
     }
 
-    public ActionResult Privacy()
+    public async Task<IActionResult> Privacy()
     {
-        ViewBag.Message = _privacyDataService.GetPrivacyDataAsync().Result;
+        ViewBag.Message = await _privacyDataService.GetPrivacyDataAsync();
         return View();
     }
 
     public async Task<IActionResult> Help()
     {
-        ViewBag.RequestInfo = await _assistant.RequestAssistanceAsync("guest").ConfigureAwait(false);
+        ViewBag.RequestInfo = await _assistant.RequestAssistanceAsync("guest");
         return View();
     }
 
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
     public IActionResult Error()
     {
-        return View(new ErrorViewModel {RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier});
+        return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
     }
 }
