@@ -25,8 +25,10 @@ public class HomeController : Controller
         return View();
     }
 
+    // Method should be asynchronous, return Interface
     public async Task<IActionResult> Privacy()
     {
+        // Can be awaited
         ViewBag.Message = await _privacyDataService.GetPrivacyDataAsync();
         return View();
     }

@@ -20,6 +20,7 @@ public class ManualAssistant : IAssistant
     {
         try
         {
+            // async method must be awaited
             await _supportService.RegisterSupportRequestAsync(requestInfo);
             return await _supportService.GetSupportInfoAsync(requestInfo);
         }

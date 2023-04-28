@@ -22,7 +22,10 @@ public class StatisticMiddleware
     {
         string path = context.Request.Path;
 
+        // No need to run task in new thread and wait for it
         await _statisticService.RegisterVisitAsync(path);
+
+        // Little optimization of UpdateHeaders(). No need to wait task completion
         var count = await _statisticService.GetVisitsCountAsync(path);
         context.Response.Headers.Add(CustomHttpHeaders.TotalPageVisits, count.ToString());
 
