@@ -40,17 +40,17 @@ public class FileReaderService : IDisposable
         if (_chunks[fileName].Count == size)
         {
             var ordered = _chunks[fileName].OrderBy(x => x.Position);
-            var bytes = new byte[_chunks[fileName].Sum(x => x.Body.Length)];
             var offset = 0;
+            using var fs = new FileStream($"{Constants.OutputFolder}\\{fileName}", FileMode.OpenOrCreate,
+                FileAccess.Write, FileShare.Write);
             foreach (var fileChunk in ordered)
             {
-                Array.ConstrainedCopy(fileChunk.Body, 0, bytes, offset, fileChunk.Body.Length);
+                fs.Write(fileChunk.Body, offset, fileChunk.Body.Length);
                 offset += fileChunk.Body.Length;
             }
 
             _chunks.Remove(fileName);
             Console.WriteLine("Saving '{0}'", fileName);
-            File.WriteAllBytes($"{Constants.OutputFolder}\\{fileName}", bytes);
         }
     }
 
