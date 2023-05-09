@@ -11,26 +11,26 @@ namespace ProfileSample.Controllers
 {
     public class HomeController : Controller
     {
+        private const int BatchCount = 10;
         public ActionResult Index()
         {
             var context = new ProfileSampleEntities();
 
-            var sources = context.ImgSources.Take(20).Select(x => x.Id);
-            
+            var count = context.ImgSources.Count();
             var model = new List<ImageModel>();
 
-            foreach (var id in sources)
+            // looks like pagination
+            for (int i = 0; i < count; i += BatchCount)
             {
-                var item = context.ImgSources.Find(id);
-
-                var obj = new ImageModel()
-                {
-                    Name = item.Name,
-                    Data = item.Data
-                };
-
-                model.Add(obj);
-            } 
+                var imgs = context.ImgSources.OrderBy(x => x.Id)
+                    .Skip(i).Take(BatchCount)
+                    .Select(x => new ImageModel()
+                    {
+                        Name = x.Name,
+                        Data = x.Data
+                    });
+                model.AddRange(imgs);
+            }
 
             return View(model);
         }
@@ -47,7 +47,7 @@ namespace ProfileSample.Controllers
                     {
                         byte[] buff = new byte[stream.Length];
 
-                        stream.Read(buff, 0, (int) stream.Length);
+                        stream.Read(buff, 0, (int)stream.Length);
 
                         var entity = new ImgSource()
                         {
@@ -58,7 +58,7 @@ namespace ProfileSample.Controllers
                         context.ImgSources.Add(entity);
                         context.SaveChanges();
                     }
-                } 
+                }
             }
 
             return RedirectToAction("Index");
