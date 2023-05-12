@@ -16,7 +16,7 @@ namespace GameOfLife
     
         public AdWindow(Window owner)
         {
-            Random rnd = new Random();
+            var rnd = new Random();
             Owner = owner;
             Width = 350;
             Height = 100;
@@ -28,11 +28,13 @@ namespace GameOfLife
             MouseDown += OnClick;
             
             imgNmb = rnd.Next(1, 3);
-            ChangeAds(this, new EventArgs());
+            ChangeAds(this, EventArgs.Empty);
 
             // Run the timer that changes the ad's image 
-            adTimer = new DispatcherTimer();
-            adTimer.Interval = TimeSpan.FromSeconds(3);
+            adTimer = new DispatcherTimer
+            {
+                Interval = TimeSpan.FromSeconds(3)
+            };
             adTimer.Tick += ChangeAds;
             adTimer.Start();
         }
@@ -45,19 +47,18 @@ namespace GameOfLife
         
         protected override void OnClosed(EventArgs e)
         {
-            //Unsubscribe();
+            Unsubscribe();
             base.OnClosed(e);
         } 
 
-        public void Unsubscribe()
+        private void Unsubscribe()
         {
             adTimer.Tick -= ChangeAds;
         }
 
         private void ChangeAds(object sender, EventArgs eventArgs)
         {
-            
-            ImageBrush myBrush = new ImageBrush();
+            var myBrush = new ImageBrush();
             
             switch (imgNmb)
             {

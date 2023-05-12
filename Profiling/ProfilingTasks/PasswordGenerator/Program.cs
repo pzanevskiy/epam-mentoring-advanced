@@ -6,21 +6,27 @@ namespace PasswordGenerator
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello, World!");
+            Span<byte> salt = new byte[16];
+            using var rng = RandomNumberGenerator.Create();
+            rng.GetBytes(salt);
+
+            const string password = "password";
+            var passwordHash = GeneratePasswordHashUsingSalt(password, salt.ToArray());
+
+            Console.WriteLine("Password hash: " + passwordHash);
         }
 
-        public string GeneratePasswordHashUsingSalt(string passwordText, byte[] salt)
+        public static string GeneratePasswordHashUsingSalt(string passwordText, byte[] salt)
         {
-            var iterate = 10000;
-            var pbkdf2 = new Rfc2898DeriveBytes(passwordText, salt, iterate);
-            byte[] hash = pbkdf2.GetBytes(20);
-            byte[] hashBytes = new byte[36];
+            const int iterate = 10000;
+            using var pbkdf2 = new Rfc2898DeriveBytes(passwordText, salt, iterate);
+            Span<byte> hash = pbkdf2.GetBytes(20);
+            Span<byte> hashBytes = new byte[36];
 
-            Array.Copy(salt, 0, hashBytes, 0, 16);
-            Array.Copy(hash, 0, hashBytes, 16, 20);
+            salt.CopyTo(hashBytes);
+            hash.CopyTo(hashBytes.Slice(16));
 
-            var passwordHash = Convert.ToBase64String(hashBytes);
-            return passwordHash;
+            return Convert.ToBase64String(hashBytes);
         }
     }
 }

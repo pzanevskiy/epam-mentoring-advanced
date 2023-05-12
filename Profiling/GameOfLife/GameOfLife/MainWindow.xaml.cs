@@ -22,10 +22,8 @@ namespace GameOfLife
             timer.Interval = TimeSpan.FromMilliseconds(200);
         }
 
-
         private void StartAd()
         {
-            
             {
                 adWindow = new AdWindow[2];
                 for (int i = 0; i < 2; i++)
@@ -39,8 +37,7 @@ namespace GameOfLife
                         adWindow[i].Show();
                     }
                 }
-                
-                
+
             }
         }
 
@@ -48,11 +45,12 @@ namespace GameOfLife
         {
             for (int i = 0; i < 2; i++)
             {
-                adWindow[i].Closed -= AdWindowOnClosed;
-                adWindow[i] = null;
+                if (adWindow != null)
+                {
+                    adWindow[i].Closed -= AdWindowOnClosed;
+                    adWindow[i] = null;
+                }
             }
-            
-            
         }
 
 
@@ -82,7 +80,5 @@ namespace GameOfLife
         {
             mainGrid.Clear();
         }
-
-        
     }
 }
