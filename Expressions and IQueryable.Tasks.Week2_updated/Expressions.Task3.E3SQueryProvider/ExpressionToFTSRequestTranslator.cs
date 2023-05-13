@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
+using Newtonsoft.Json.Serialization;
 
 namespace Expressions.Task3.E3SQueryProvider
 {
@@ -30,9 +31,47 @@ namespace Expressions.Task3.E3SQueryProvider
             {
                 var predicate = node.Arguments[1];
                 Visit(predicate);
-
                 return node;
             }
+
+            if (node.Method.DeclaringType == typeof(string))
+            {
+                switch (node.Method.Name)
+                {
+                    case "Equals":
+                        Visit(node.Object);
+                        _resultStringBuilder.Append("(");
+                        Visit(node.Arguments[0]);
+                        _resultStringBuilder.Append(")");
+                        return node;
+
+                    case "StartsWith":
+                        Visit(node.Object);
+                        _resultStringBuilder.Append("(");
+                        Visit(node.Arguments[0]);
+                        _resultStringBuilder.Append("*)");
+                        return node;
+
+                    case "EndsWith":
+                        Visit(node.Object);
+                        _resultStringBuilder.Append("(*");
+                        Visit(node.Arguments[0]);
+                        _resultStringBuilder.Append(")");
+                        return node;
+
+                    case "Contains":
+                        Visit(node.Object);
+                        _resultStringBuilder.Append("(*");
+                        Visit(node.Arguments[0]);
+                        _resultStringBuilder.Append("*)");
+                        return node;
+
+                    default:
+                        throw new NotSupportedException($"Method {node.Method.Name} is not supported yet.");
+                }
+
+            }
+
             return base.VisitMethodCall(node);
         }
 
@@ -41,17 +80,35 @@ namespace Expressions.Task3.E3SQueryProvider
             switch (node.NodeType)
             {
                 case ExpressionType.Equal:
-                    if (node.Left.NodeType != ExpressionType.MemberAccess)
-                        throw new NotSupportedException($"Left operand should be property or field: {node.NodeType}");
+                    {
+                        Expression leftNode;
+                        Expression rightNode;
+                        try
+                        {
+                            var nodes = new[] { node.Left, node.Right };
 
-                    if (node.Right.NodeType != ExpressionType.Constant)
-                        throw new NotSupportedException($"Right operand should be constant: {node.NodeType}");
+                            leftNode = nodes.Single(x => x.NodeType is ExpressionType.MemberAccess);
+                            rightNode = nodes.Single(x => x.NodeType is ExpressionType.Constant);
+                        }
+                        catch (Exception)
+                        {
+                            throw new NotSupportedException($"Operand should be property, field or constant: {node.NodeType}");
+                        }
 
-                    Visit(node.Left);
-                    _resultStringBuilder.Append("(");
-                    Visit(node.Right);
-                    _resultStringBuilder.Append(")");
-                    break;
+                        Visit(leftNode);
+                        _resultStringBuilder.Append("(");
+                        Visit(rightNode);
+                        _resultStringBuilder.Append(")");
+                        break;
+                    }
+
+                case ExpressionType.AndAlso:
+                    {
+                        Visit(node.Left);
+                        _resultStringBuilder.Append(" AND ");
+                        Visit(node.Right);
+                        break;
+                    }
 
                 default:
                     throw new NotSupportedException($"Operation '{node.NodeType}' is not supported");
