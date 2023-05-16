@@ -47,7 +47,7 @@ namespace Expressions.Task3.E3SQueryProvider.Test.Ignored
         [Fact(Skip = "This test is provided to show the general idea of usage.")]
         public void WithoutProvider()
         {
-            IEnumerable<EmployeeEntity> res = searchService.Value.SearchFts<EmployeeEntity>("workstation:(EPRUIZHW0249)", 0, 1);
+            IEnumerable<EmployeeEntity> res = searchService.Value.SearchFts<EmployeeEntity>(new []{"workstation:(EPRUIZHW0249)"}, 0, 1);
 
             foreach (var emp in res)
             {
@@ -58,7 +58,7 @@ namespace Expressions.Task3.E3SQueryProvider.Test.Ignored
         [Fact(Skip = "This test is provided to show the general idea of usage.")]
         public void WithoutProviderNonGeneric()
         {
-            var res = searchService.Value.SearchFts(typeof(EmployeeEntity), "workstation:(EPRUIZHW0249)", 0, 10);
+            var res = searchService.Value.SearchFts(typeof(EmployeeEntity), new[] { "workstation:(EPRUIZHW0249)" }, 0, 10);
 
             foreach (var emp in res.OfType<EmployeeEntity>())
             {

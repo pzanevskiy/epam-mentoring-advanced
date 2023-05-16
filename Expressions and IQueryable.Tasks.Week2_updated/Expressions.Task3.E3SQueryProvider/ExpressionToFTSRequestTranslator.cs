@@ -15,11 +15,11 @@ namespace Expressions.Task3.E3SQueryProvider
             _resultStringBuilder = new StringBuilder();
         }
 
-        public string Translate(Expression exp)
+        public string[] Translate(Expression exp)
         {
             Visit(exp);
 
-            return _resultStringBuilder.ToString();
+            return _resultStringBuilder.ToString().Split(Environment.NewLine);
         }
 
         #region protected methods
@@ -105,7 +105,7 @@ namespace Expressions.Task3.E3SQueryProvider
                 case ExpressionType.AndAlso:
                     {
                         Visit(node.Left);
-                        _resultStringBuilder.Append(" AND ");
+                        _resultStringBuilder.AppendLine();
                         Visit(node.Right);
                         break;
                     }

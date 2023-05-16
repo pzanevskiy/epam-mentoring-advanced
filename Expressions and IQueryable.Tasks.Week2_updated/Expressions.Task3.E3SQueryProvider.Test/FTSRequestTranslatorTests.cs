@@ -17,8 +17,8 @@ namespace Expressions.Task3.E3SQueryProvider.Test
             Expression<Func<EmployeeEntity, bool>> expression
                 = employee => "EPRUIZHW006" == employee.Workstation;
 
-            string translated = translator.Translate(expression);
-            Assert.Equal("Workstation:(EPRUIZHW006)", translated);
+            var translated = translator.Translate(expression);
+            Assert.Equal("Workstation:(EPRUIZHW006)", translated[0]);
         }
 
         #endregion
@@ -32,8 +32,8 @@ namespace Expressions.Task3.E3SQueryProvider.Test
             Expression<Func<IQueryable<EmployeeEntity>, IQueryable<EmployeeEntity>>> expression
                 = query => query.Where(e => e.Workstation == "EPRUIZHW006");
 
-            string translated = translator.Translate(expression);
-            Assert.Equal("Workstation:(EPRUIZHW006)", translated);
+            var translated = translator.Translate(expression);
+            Assert.Equal("Workstation:(EPRUIZHW006)", translated[0]);
         }
 
         [Fact]
@@ -43,8 +43,8 @@ namespace Expressions.Task3.E3SQueryProvider.Test
             Expression<Func<EmployeeEntity, bool>> expression
                 = employee => employee.Workstation == "EPRUIZHW006";
 
-            string translated = translator.Translate(expression);
-            Assert.Equal("Workstation:(EPRUIZHW006)", translated);
+            var translated = translator.Translate(expression);
+            Assert.Equal("Workstation:(EPRUIZHW006)", translated[0]);
         }
 
         [Fact]
@@ -54,8 +54,8 @@ namespace Expressions.Task3.E3SQueryProvider.Test
             Expression<Func<EmployeeEntity, bool>> expression
                 = employee => employee.Workstation.Equals("EPRUIZHW006");
 
-            string translated = translator.Translate(expression);
-            Assert.Equal("Workstation:(EPRUIZHW006)", translated);
+            var translated = translator.Translate(expression);
+            Assert.Equal("Workstation:(EPRUIZHW006)", translated[0]);
         }
 
         [Fact]
@@ -64,9 +64,9 @@ namespace Expressions.Task3.E3SQueryProvider.Test
             var translator = new ExpressionToFtsRequestTranslator();
             Expression<Func<EmployeeEntity, bool>> expression
                 = employee => employee.Workstation.StartsWith("EPRUIZHW006");
-            
-            string translated = translator.Translate(expression);
-            Assert.Equal("Workstation:(EPRUIZHW006*)", translated);
+
+            var translated = translator.Translate(expression);
+            Assert.Equal("Workstation:(EPRUIZHW006*)", translated[0]);
         }
 
         [Fact]
@@ -76,8 +76,8 @@ namespace Expressions.Task3.E3SQueryProvider.Test
             Expression<Func<EmployeeEntity, bool>> expression
                 = employee => employee.Workstation.EndsWith("IZHW0060");
 
-            string translated = translator.Translate(expression);
-            Assert.Equal("Workstation:(*IZHW0060)", translated);
+            var translated = translator.Translate(expression);
+            Assert.Equal("Workstation:(*IZHW0060)", translated[0]);
         }
 
         [Fact]
@@ -87,8 +87,8 @@ namespace Expressions.Task3.E3SQueryProvider.Test
             Expression<Func<EmployeeEntity, bool>> expression
                 = employee => employee.Workstation.Contains("IZHW006");
 
-            string translated = translator.Translate(expression);
-            Assert.Equal("Workstation:(*IZHW006*)", translated);
+            var translated = translator.Translate(expression);
+            Assert.Equal("Workstation:(*IZHW006*)", translated[0]);
         }
 
         #endregion

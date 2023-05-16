@@ -35,7 +35,7 @@ namespace Expressions.Task3.E3SQueryProvider.QueryProvider
             Type itemType = TypeHelper.GetElementType(expression.Type);
 
             var translator = new ExpressionToFtsRequestTranslator();
-            string queryString = translator.Translate(expression);
+            string[] queryString = translator.Translate(expression);
 
             return (TResult)_e3SClient.SearchFts(itemType, queryString);
         }
