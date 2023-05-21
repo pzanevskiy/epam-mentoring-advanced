@@ -9,9 +9,8 @@ namespace API
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            // Add services to the container.
-
-            builder.Services.AddDbContext<DemoContext>(o => o.UseInMemoryDatabase("DemoDB"));
+            builder.Services.AddDbContext<DemoContext>(o =>
+                o.UseSqlServer(builder.Configuration["ConnectionString"]));
 
             builder.Services.AddMediatR(cfg =>
             {

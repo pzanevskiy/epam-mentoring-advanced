@@ -12,7 +12,7 @@ public class Item
 
     public string Description { get; set; }
 
-    public decimal Price { get; set; }
+    public double Price { get; set; }
 
     [ForeignKey("CategoryId")]
     public int CategoryId { get; set; }
